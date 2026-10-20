@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <!-- PERBAIKAN 1: Ubah meta viewport -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pinch & Color Match Challenge — AR Gesture Game</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -389,24 +389,102 @@
             border-color: #ffffff !important; border-width: 5px !important;
         }
         
-        /* =========================================
-           TRIK UTAMA: SKALA OTOMATIS UNTUK HP
-           ========================================= */
-        @media (max-width: 1024px) {
-            #ui-layer {
-                width: 1200px !important; 
-                height: 800px !important;
-                position: absolute !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform-origin: top left !important;
-                transform: translate(-50%, -50%) scale(calc(100vw / 1200)) !important; 
-            }
-            #webcam-feed, #video-overlay, #fallback-bg {
-                width: 100vw !important; height: 100vh !important;
-                transform: none !important; left: 0 !important; top: 0 !important;
-            }
-        }
+		/* =========================================
+		   PERBAIKAN RESPONSIVE LAYOUT HP (MOBILE/TABLET)
+		   ========================================= */
+		@media (max-width: 1024px) {
+			/* 1. Atur container UI agar menyesuaikan tinggi & lebar layar */
+			#ui-layer {
+				width: 100vw !important;
+				height: 100vh !important;
+				position: fixed !important;
+				top: 0 !important;
+				left: 0 !important;
+				transform: none !important;
+				padding: 10px !important;
+				box-sizing: border-box !important;
+				overflow: hidden !important;
+			}
+
+			/* 2. Posisikan Karakter tepat di tengah tanpa zoom berlebihan */
+			#character-container {
+				padding-left: 0 !important;
+				transform: scale(0.85) !important; /* Perkecil agar muat utuh di layar HP */
+				z-index: 10 !important;
+			}
+
+			/* 3. Penyesuaian Top Bar (Target Card & List Parts) */
+			.top-bar {
+				top: 10px !important;
+				left: 10px !important;
+				right: 10px !important;
+				transform: scale(0.85);
+				transform-origin: top left;
+			}
+
+			.target-card {
+				width: 220px !important;
+				padding: 10px !important;
+			}
+
+			.target-card .target-svg-container {
+				width: 110px !important;
+				height: 110px !important;
+			}
+
+			.parts-list-vertical {
+				padding: 10px 14px !important;
+				gap: 6px !important;
+				font-size: 0.8rem !important;
+			}
+
+			/* 4. Penyesuaian Bottom Bar (Palet Warna & Tombol Aksi) */
+			.bottom-bar {
+				bottom: 10px !important;
+				left: 10px !important;
+				right: 10px !important;
+				align-items: flex-end !important;
+			}
+
+			.palette-grid {
+				width: auto !important;
+				max-width: 55vw !important;
+				padding: 10px !important;
+				gap: 8px !important;
+			}
+
+			.palette-grid .color-swatch {
+				width: 45px !important;
+				height: 45px !important;
+				border-width: 2px !important;
+			}
+
+			.side-actions {
+				right: 10px !important;
+				gap: 8px !important;
+			}
+
+			.side-actions button {
+				width: 48px !important;
+				height: 48px !important;
+			}
+
+			.side-actions button i {
+				font-size: 1.1rem !important;
+			}
+
+			.side-actions button span {
+				display: none !important; /* Sembunyikan label teks agar tidak sempit */
+			}
+
+			/* 5. Tampilan Background & Kamera */
+			#webcam-feed, #video-overlay, #fallback-bg {
+				width: 100vw !important;
+				height: 100vh !important;
+				top: 0 !important;
+				left: 0 !important;
+			}
+		}
     </style>
 </head>
 <body class="text-white select-none overflow-hidden">
