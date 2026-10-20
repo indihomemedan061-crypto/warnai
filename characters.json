@@ -1,0 +1,298 @@
+{
+  "version": "3.1",
+  "lastUpdated": "2026-10-10",
+  "totalCharacters": 25,
+  "note": "Format v3.1: hanya bagian yang JELAS dan bisa diwarnai. Bagian locked (mata, mulut, hidung) tidak listed.",
+  "characters": [
+    {
+      "id": "robot", "name": "🤖 Robot Cyber", "shortName": "Robot",
+	  "scale": 1.1,
+      "parts": [
+        { "key": "head", "label": "Kepala" },
+        { "key": "body", "label": "Badan" },
+        { "key": "armL", "label": "Tangan Kiri" },
+        { "key": "armR", "label": "Tangan Kanan" },
+        { "key": "legs", "label": "Kaki" },
+        { "key": "core", "label": "Inti" }
+      ]
+    },
+    {
+      "id": "monster", "name": "👹 Monster Lucu", "shortName": "Monster",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "body", "label": "Badan" },
+        { "key": "horns", "label": "Tanduk" },
+        { "key": "belly", "label": "Perut" },
+        { "key": "feet", "label": "Kaki" }
+      ]
+    },
+   {
+  "id": "superhero", "name": "🦸 Superhero", "shortName": "Superhero",
+  "scale": 1.3,
+  "parts": [
+    { "key": "head", "label": "Kepala" },
+    { "key": "mask", "label": "Topeng" },
+    { "key": "suit", "label": "Baju" },
+    { "key": "cape", "label": "Jubah" },
+    { "key": "emblem", "label": "Emblem" },
+    { "key": "boots", "label": "Sepatu" }
+  ]
+},
+    {
+      "id": "cat", "name": "🐱 Maskot Kucing", "shortName": "Kucing",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "head", "label": "Kepala" },
+        { "key": "ears", "label": "Telinga" },
+        { "key": "body", "label": "Badan" },
+        { "key": "paws", "label": "Kaki" },
+        { "key": "collar", "label": "Kalung" }
+      ]
+    },
+    {
+      "id": "dog", "name": "🐶 Anjing Setia", "shortName": "Anjing",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "head", "label": "Kepala" },
+        { "key": "earL", "label": "Telinga Kiri" },
+        { "key": "earR", "label": "Telinga Kanan" },
+        { "key": "body", "label": "Badan" },
+        { "key": "paws", "label": "Kaki" }
+      ]
+    },
+    {
+        "id": "turtle", "name": "🐢 Kura-kura Lucu", "shortName": "Kura-kura",
+		"scale": 1.5,
+		"parts": [
+			{ "key": "shell", "label": "Rumah" },
+			{ "key": "shellLeft", "label": "Motif Kiri" },
+			{ "key": "shellRight", "label": "Motif Kanan" },
+			{ "key": "body", "label": "Badan" },
+			{ "key": "head", "label": "Kepala" },
+			{ "key": "legs", "label": "Kaki" },
+			{ "key": "tail", "label": "Ekor" }
+      ]
+    },
+    {
+      "id": "astro", "name": "🚀 Astronaut", "shortName": "Astronaut",
+	  "scale": 1.15,
+      "parts": [
+        { "key": "helmet", "label": "Helm" },
+        { "key": "body", "label": "Badan" },
+        { "key": "backpack", "label": "Tas" },
+        { "key": "boots", "label": "Sepatu" },
+        { "key": "gloves", "label": "Sarung Tangan" },
+        { "key": "visor", "label": "Kaca" }
+      ]
+    },
+    {
+      "id": "fish", "name": "🐠 Ikan Warna", "shortName": "Ikan",
+	  "scale": 1.5,
+      "parts": [
+        { "key": "body", "label": "Badan" },
+        { "key": "tail", "label": "Ekor" },
+        { "key": "fins", "label": "Sirip" }
+      ]
+    },
+    {
+	"id": "sunflower", 
+    "name": "🌻 Bunga Matahari", 
+    "shortName": "Bunga",
+	"scale": 1.3,
+    "parts": [
+    { "key": "petals", "label": "Kelopak" },
+    { "key": "center", "label": "Pusat" },
+    { "key": "stem", "label": "Batang" },
+    { "key": "stem", "label": "Batang" },
+    { "key": "leafL", "label": "Daun Kiri" },
+    { "key": "leafR", "label": "Daun Kanan" },
+    { "key": "pot", "label": "Pot" }
+  ]
+},
+    {
+  "id": "pumpkin", "name": "🎃 Labu Halloween", "shortName": "Labu",
+  "scale": 1.3,
+  "parts": [
+    { "key": "body", "label": "Badan" },
+    { "key": "stem", "label": "Tangkai" },
+    { "key": "leaf", "label": "Daun" },
+    { "key": "eyeL", "label": "Mata Kiri" },
+    { "key": "eyeR", "label": "Mata Kanan" },
+    { "key": "mouth", "label": "Mulut" }
+  ]
+},
+    {
+      "id": "bear", "name": "🐻 Beruang Lucu", "shortName": "Beruang",
+	  "scale": 1.19,
+      "parts": [
+        { "key": "head", "label": "Kepala" },
+        { "key": "earL", "label": "Telinga Kiri" },
+        { "key": "earR", "label": "Telinga Kanan" },
+        { "key": "body", "label": "Badan" },
+        { "key": "belly", "label": "Perut" },
+        { "key": "paws", "label": "Kaki" }
+      ]
+    },
+    {
+      "id": "ninja", "name": "🥷 Robot Ninja", "shortName": "Ninja",
+	  "scale": 1.15,
+      "parts": [
+        { "key": "hood", "label": "Topi" },
+        { "key": "mask", "label": "Topeng" },
+        { "key": "body", "label": "Badan" },
+        { "key": "belt", "label": "Sabuk" },
+        { "key": "sword", "label": "Pedang" },
+		    { "key": "legs", "label": "Kaki" }
+      ]
+    },
+    {
+      "id": "pizza", "name": "🍕 Pizza Yummy", "shortName": "Pizza",
+	  "scale": 1.15,
+      "parts": [
+        { "key": "crust", "label": "Roti" },
+        { "key": "cheese", "label": "Keju" },
+        { "key": "pepperoni", "label": "Pepperoni" },
+        { "key": "basil", "label": "Daun" },
+        { "key": "plate", "label": "Piring" }
+      ]
+    },
+    {
+      "id": "plane", "name": "✈️ Pesawat Terbang", "shortName": "Pesawat",
+	  "scale": 1.45,
+      "parts": [
+        { "key": "body", "label": "Badan" },
+        { "key": "wing", "label": "Sayap" },
+        { "key": "tail", "label": "Ekor" },
+        { "key": "window", "label": "Jendela" },
+        { "key": "propeller", "label": "Baling-baling" },
+		{ "key": "nose", "label": "Hidung" }
+      ]
+    },
+    {
+      "id": "cake", "name": "🎂 Kue Ulang Tahun", "shortName": "Kue",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "base", "label": "Dasar" },
+        { "key": "top", "label": "Atas" },
+        { "key": "frosting", "label": "Krim" },
+        { "key": "candle", "label": "Lilin" },
+        { "key": "flame", "label": "Api" }
+      ]
+    },
+    {
+      "id": "lion", "name": "🦁 Singa Gagah", "shortName": "Singa",
+	  "scale": 1.19,
+      "parts": [
+        { "key": "mane", "label": "Surai" },
+        { "key": "face", "label": "Wajah" },
+        { "key": "body", "label": "Badan" },
+        { "key": "legs", "label": "Kaki" },
+        { "key": "tail", "label": "Ekor" }
+      ]
+    },
+    {
+      "id": "penguin", "name": "🐧 Penguin Lucu", "shortName": "Penguin",
+	  "scale": 1.1,
+      "parts": [
+        { "key": "body", "label": "Badan" },
+        { "key": "belly", "label": "Perut" },
+        { "key": "beak", "label": "Paruh" },
+        { "key": "feet", "label": "Kaki" },
+        { "key": "scarf", "label": "Syal" },
+        { "key": "hat", "label": "Topi" }
+      ]
+    },
+    {
+      "id": "butterfly", "name": "🦋 Kupu-kupu Cantik", "shortName": "Kupu-kupu",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "wingUL", "label": "Sayap Atas Kiri" },
+        { "key": "wingUR", "label": "Sayap Atas Kanan" },
+        { "key": "wingLL", "label": "Sayap Bawah Kiri" },
+        { "key": "wingLR", "label": "Sayap Bawah Kanan" },
+        { "key": "spots", "label": "Bintik" }
+      ]
+    },
+    {
+      "id": "car", "name": "🚗 Mobil Merah", "shortName": "Mobil",
+	  "scale": 1.35,
+      "parts": [
+        { "key": "body", "label": "Badan" },
+        { "key": "roof", "label": "Atap" },
+        { "key": "windows", "label": "Jendela" },
+        { "key": "wheels", "label": "Roda" },
+        { "key": "lights", "label": "Lampu" },
+        { "key": "bumper", "label": "Bemper" }
+      ]
+    },
+    {
+      "id": "house", "name": "🏠 Rumah Nyaman", "shortName": "Rumah",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "roof", "label": "Atap" },
+        { "key": "walls", "label": "Dinding" },
+        { "key": "door", "label": "Pintu" },
+        { "key": "windows", "label": "Jendela" },
+        { "key": "chimney", "label": "Cerobong" }
+      ]
+    },
+    {
+	   "id": "rainbow", "name": "🌈 Pelangi Indah", "shortName": "Pelangi",
+	   "scale": 1.3,
+	   "parts": [
+		{ "key": "arc1", "label": "Busur 1 (Luar)" },
+		{ "key": "arc2", "label": "Busur 2" },
+		{ "key": "arc3", "label": "Busur 3 (Tengah)" },
+		{ "key": "arc4", "label": "Busur 4" },
+		{ "key": "arc5", "label": "Busur 5 (Dalam)" },
+		{ "key": "cloud", "label": "Awan" }
+		]
+	},
+	{
+		"id": "icecream",
+		"scale": 1.15,
+		"parts": [
+		{ "key": "scoop1", "label": "Scoop Kiri" },
+		{ "key": "scoop2", "label": "Scoop Tengah" },
+		{ "key": "scoop3", "label": "Scoop Kanan" },
+		{ "key": "cone", "label": "Kerucut" },
+		{ "key": "sprinkles", "label": "Toping" },
+		{ "key": "cherry", "label": "Ceri" }
+	]
+	},
+    {
+      "id": "owl", "name": "🦉 Burung Hantu", "shortName": "Burung Hantu",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "body", "label": "Badan" },
+        { "key": "belly", "label": "Perut" },
+        { "key": "eyeL", "label": "Mata Kiri" },
+        { "key": "eyeR", "label": "Mata Kanan" },
+        { "key": "beak", "label": "Paruh" },
+        { "key": "wings", "label": "Sayap" }
+      ]
+    },
+    {
+      "id": "frog", "name": "🐸 Katak Hijau", "shortName": "Katak",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "body", "label": "Badan" },
+        { "key": "belly", "label": "Perut" },
+        { "key": "eyeL", "label": "Mata Kiri" },
+        { "key": "eyeR", "label": "Mata Kanan" },
+        { "key": "legs", "label": "Kaki" },
+        { "key": "spots", "label": "Bintik" }
+      ]
+    },
+    {
+      "id": "train", "name": "🚂 Truk Box", "shortName": "Truk",
+	  "scale": 1.3,
+      "parts": [
+        { "key": "engine", "label": "Bak Belakang" },
+        { "key": "cabin", "label": "Kabin" },
+        { "key": "wheels", "label": "Roda" },
+        { "key": "chimney", "label": "Knalpot" }
+      ]
+    }
+  ]
+}

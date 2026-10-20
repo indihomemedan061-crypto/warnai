@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <!-- PERBAIKAN 1: Ubah meta viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pinch & Color Match Challenge — AR Gesture Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script src="tailwind.js"></script>
+    <link rel="stylesheet" href="fontawesome.min.css">
+    <link href="google-fonts.css" rel="stylesheet">
+    <script src="confetti.min.js"></script>
+    <script src="html2canvas.min.js"></script>
+
+    <style>
+        * {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            background: #0f172a;
+            min-height: 100vh;
+            overflow: auto;
+            height: auto;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .part-item {
+            display: flex;
+            align-items: center;
+            gap: 10px; 
+            font-size: 1rem; 
+            font-weight: 700;
+            color: #e2e8f0;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+            transition: all 0.2s ease;
+            border-radius: 16px;
+        }
+        .part-item .part-label { color: inherit; }
+        .part-item .part-status {
+            width: 18px; height: 18px; flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            background: transparent;
+        }
+        .part-item.done .part-label { color: #86efac; opacity: 1; }
+        .part-item.done .part-status {
+            background: #22c55e; border-color: #86efac;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+        }
+
+        #webcam-feed {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            object-fit: cover; transform: scaleX(-1);
+            z-index: 1; opacity: 0; transition: opacity 0.6s ease;
+        }
+        #webcam-feed.active { opacity: 1; }
+
+        #video-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 2; pointer-events: none;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.15) 30%, rgba(15, 23, 42, 0.15) 70%, rgba(15, 23, 42, 0.6) 100%);
+        }
+
+        #fallback-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh; z-index: 0;
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 70%, #020617 100%);
+        }
+
+        .glass-panel { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); }
+        .glass-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+        }
+        .glass-button:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-1px) scale(1.02); }
+        .glass-button:active { transform: translateY(1px) scale(0.97); }
+
+        #pinch-cursor {
+            position: fixed; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.15s ease, height 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        #pinch-cursor.pinched-active {
+            border-color: #22c55e !important;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.95), 0 0 60px rgba(34, 197, 94, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.9);
+            transform: translate(-50%, -50%) scale(1.15) !important;
+            background: rgba(34, 197, 94, 0.35) !important;
+        }
+
+        .pinch-ripple {
+            position: fixed; pointer-events: none; z-index: 9998;
+            border: 3px solid #22c55e; border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: rippleExpand 0.6s ease-out forwards;
+        }
+        @keyframes rippleExpand {
+            0% { width: 20px; height: 20px; opacity: 1; border-width: 4px; }
+            100% { width: 140px; height: 140px; opacity: 0; border-width: 1px; }
+        }
+
+        .character-part {
+            cursor: pointer;
+            transition: filter 0.2s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: center;
+        }
+        .character-part:hover, .character-part.hover-target {
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.95)) brightness(1.25);
+        }
+        .character-part.locked-part {
+            filter: drop-shadow(0 0 14px rgba(34, 197, 94, 0.9)) brightness(1.1);
+            cursor: pointer;
+        }
+        .character-part.locked-part:hover { filter: drop-shadow(0 0 20px rgba(34, 197, 94, 1)) brightness(1.25); }
+
+        .part-matched { animation: pulseMatch 0.6s ease-out; }
+        @keyframes pulseMatch {
+            0% { transform: scale(1); filter: brightness(1); }
+            40% { transform: scale(1.1); filter: brightness(1.6) drop-shadow(0 0 15px #22c55e); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        .part-wrong { animation: shakeWrong 0.5s ease-out; }
+        @keyframes shakeWrong {
+            0%, 100% { transform: translateX(0); filter: brightness(1); }
+            15% { transform: translateX(-6px); filter: brightness(1.3) drop-shadow(0 0 12px #ef4444); }
+            30% { transform: translateX(6px); filter: brightness(1.3) drop-shadow(0 0 12px #ef4444); }
+            45% { transform: translateX(-5px); }
+            60% { transform: translateX(5px); }
+            75% { transform: translateX(-3px); }
+            90% { transform: translateX(3px); }
+        }
+
+        .part-unlocking { animation: unlockAnim 0.5s ease-out; }
+        @keyframes unlockAnim {
+            0% { transform: scale(1); filter: brightness(1.5) drop-shadow(0 0 20px #fbbf24); }
+            50% { transform: scale(1.15); filter: brightness(1.3); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        #svg-holder svg {
+            transform: scale(1.5);
+            filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.6));
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.12) rotate(3deg);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.95), 0 0 40px rgba(255, 255, 255, 0.5);
+            border-color: #ffffff; border-width: 5px;
+        }
+        .color-swatch.active-drag {
+            opacity: 0.35; filter: grayscale(70%); transform: scale(0.9);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        #ui-layer {
+            position: relative; z-index: 20;
+            height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 6px;
+        }
+
+        #particles-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 15;
+        }
+
+        .target-panel { }
+        .palette-panel { box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); overflow-x: auto; border-radius: 16px; }
+
+        .hold-button { position: relative; overflow: visible; transition: transform 0.15s ease; }
+        .hold-button.pressing { transform: scale(0.94); }
+        .hold-button.triggered { animation: holdTrigger 0.4s ease-out; }
+        @keyframes holdTrigger {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.12); filter: brightness(1.5); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+        .hold-button.cancelled { animation: holdCancel 0.3s ease-out; }
+        @keyframes holdCancel {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        .hold-ring {
+            position: absolute; top: -6px; left: -6px;
+            width: calc(100% + 12px); height: calc(100% + 12px);
+            pointer-events: none; transform: rotate(-90deg); opacity: 0; transition: opacity 0.2s ease;
+        }
+        .hold-button.pressing .hold-ring { opacity: 1; }
+        .hold-ring circle { fill: none; stroke-width: 4; stroke-linecap: round; }
+        .hold-ring .ring-bg { stroke: rgba(255, 255, 255, 0.15); }
+        .hold-ring .ring-fill { stroke: #22c55e; transition: stroke 0.2s ease; stroke-dasharray: 283; stroke-dashoffset: 283; }
+
+        #reset-btn, #change-btn, #change-char-btn, #change-color-btn { transition: all 0.2s ease; }
+        #reset-btn:hover, #change-btn:hover, #change-char-btn:hover, #change-color-btn:hover { transform: scale(1.08); }
+        #reset-btn i, #change-btn i, #change-char-btn i, #change-color-btn i { font-size: 1.6rem; }
+        #reset-btn span, #change-btn span, #change-char-btn span, #change-color-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+        #reset-btn.pressing { background: linear-gradient(135deg, #f59e0b, #ea580c) !important; }
+        #reset-btn.triggered { background: linear-gradient(135deg, #22c55e, #16a34a) !important; }
+
+        #toast-container {
+            position: fixed; bottom: 14%; left: 50%; transform: translateX(-50%);
+            z-index: 10000; pointer-events: none; display: flex; flex-direction: column; gap: 8px; align-items: center;
+        }
+        .toast {
+            padding: 14px 26px; border-radius: 20px; font-weight: 700; font-size: 1rem; text-align: center;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55); backdrop-filter: blur(16px); border: 2px solid;
+            animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), toastOut 0.3s ease-in forwards 1.7s;
+            max-width: 340px; line-height: 1.3;
+        }
+        .toast.correct { background: rgba(34, 197, 94, 0.95); border-color: #86efac; color: #ffffff; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+        .toast.wrong { background: rgba(239, 68, 68, 0.95); border-color: #fca5a5; color: #ffffff; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+        .toast.same { background: rgba(251, 191, 36, 0.95); border-color: #fde68a; color: #1a1005; }
+        .toast.locked { background: rgba(34, 197, 94, 0.95); border-color: #86efac; color: #ffffff; }
+        @keyframes toastIn { 0% { transform: translateY(30px) scale(0.8); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        @keyframes toastOut { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(20px) scale(0.95); opacity: 0; } }
+
+        .progress-big-bar {
+            height: 16px; background: rgba(30, 41, 59, 0.8); border-radius: 8px; overflow: hidden;
+            position: relative; border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .progress-big-fill {
+            height: 100%; transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative; box-shadow: 0 0 12px rgba(74, 222, 128, 0.5);
+        }
+        .progress-big-fill::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        .celebration-modal, .rest-modal {
+            position: fixed; inset: 0; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(16px);
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        .celebration-modal.active, .rest-modal.active { opacity: 1; pointer-events: auto; }
+        .celebration-card, .rest-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+            border: 2px solid rgba(251, 191, 36, 0.4); border-radius: 32px; padding: 32px 24px;
+            max-width: 480px; width: 90%; text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6); transform: scale(0.85);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 90vh; overflow-y: auto;
+        }
+        .rest-modal.active .rest-card, .celebration-modal.active .celebration-card { transform: scale(1); }
+        .rest-card { border-color: rgba(99, 102, 241, 0.4); }
+
+        .star-rating { font-size: 2.5rem; margin: 12px 0; }
+        .star-filled {
+            color: #fbbf24; filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));
+            animation: starPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+        }
+        .star-filled:nth-child(1) { animation-delay: 0.1s; }
+        .star-filled:nth-child(2) { animation-delay: 0.2s; }
+        .star-filled:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes starPop { 0% { transform: scale(0) rotate(-180deg); } 100% { transform: scale(1) rotate(0deg); } }
+        .star-empty { color: rgba(148, 163, 184, 0.3); }
+
+        .stat-row {
+            display: flex; justify-content: space-between; padding: 8px 16px;
+            border-radius: 12px; background: rgba(15, 23, 42, 0.6); margin-bottom: 8px; font-size: 0.9rem;
+        }
+        .stat-label { color: #cbd5e1; display: flex; align-items: center; gap: 8px; }
+        .stat-value { color: #fbbf24; font-weight: 800; }
+        .stat-value.good { color: #4ade80; }
+        .stat-value.warn { color: #fbbf24; }
+        .stat-value.bad { color: #f87171; }
+
+        #hint-text { font-size: 0.7rem; line-height: 1.3; }
+
+        .loading-screen {
+            position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; transition: opacity 0.5s ease;
+        }
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
+        .loading-spinner {
+            width: 60px; height: 60px; border: 5px solid rgba(251, 191, 36, 0.2);
+            border-top-color: #fbbf24; border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #part-hold-ring {
+            position: fixed; pointer-events: none; z-index: 9997;
+            transform: translate(-50%, -50%); transition: opacity 0.15s ease;
+        }
+        #part-hold-ring.hidden { opacity: 0; }
+        #part-hold-ring svg { transform: rotate(-90deg); display: block; }
+        #part-hold-ring .phr-bg { fill: none; stroke: rgba(255, 255, 255, 0.25); stroke-width: 5; }
+        #part-hold-ring .phr-fill {
+            fill: none; stroke: #22c55e; stroke-width: 5; stroke-linecap: round;
+            stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke 0.15s ease;
+        }
+
+        .back-menu-btn:hover {
+            border-color: #22d3ee !important; color: #fff !important;
+            transform: scale(1.08); box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+        }
+        .back-menu-btn.pressing { transform: scale(0.94); }
+        .back-menu-btn.pressing .hold-ring { opacity: 1; }
+        .back-menu-btn.triggered { animation: holdTrigger 0.4s ease-out; }
+
+        #target-popup-inner svg {
+            width: 100% !important; height: 100% !important;
+            transform: scale(1) !important; filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .top-bar {
+            position: absolute; top: 20px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            z-index: 50; pointer-events: none;
+        }
+        .top-bar > * { pointer-events: auto; }
+        
+        .target-card {
+            border-radius: 20px; padding: 16px; width: 305px;
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .target-card .target-svg-container {
+            width: 170px; height: 170px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 12px;
+        }
+        .target-card .progress-section { width: 100%; }
+        .target-card .progress-section span { font-size: 0.85rem; }
+        
+        .parts-list-vertical {
+            display: flex; flex-direction: column; gap: 12px; padding: 16px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); border-radius: 16px;
+        }
+        
+        .bottom-bar {
+            position: absolute; bottom: 20px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; align-items: flex-end;
+            z-index: 50; pointer-events: none;
+        }
+        .bottom-bar > * { pointer-events: auto; }
+        
+        .palette-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+            gap: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border-radius: 16px; width: 485px;
+        }
+        .palette-grid .color-swatch {
+            width: calc(25% - 11px); height: 125px; flex-shrink: 0;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            position: relative; cursor: pointer; border-radius: 50%;
+        }
+        
+        .side-actions {
+            display: flex; flex-direction: column; gap: 16px; position: absolute;
+            right: 20px; top: 50%; transform: translateY(-50%); z-index: 50;
+        }
+        .side-actions button {
+            width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; color: #fff;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 4px; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+        }
+        .side-actions button i { font-size: 1.6rem; }
+        .side-actions button span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
+        
+        .back-btn-circle {
+            width: 60px; height: 60px; border-radius: 16px;
+            background: rgba(148, 163, 184, 0.25); border: 2px solid rgba(255,255,255,0.3); color: #e2e8f0;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.5rem;
+            transition: all 0.2s ease; position: relative; pointer-events: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        #character-container { padding-left: 315px; transform: scale(1.25); }
+        
+        .color-swatch.pinched-hover {
+            transform: scale(1.12) rotate(3deg) !important;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.95), 0 0 40px rgba(255, 255, 255, 0.5) !important;
+            border-color: #ffffff !important; border-width: 5px !important;
+        }
+        
+        /* =========================================
+           TRIK UTAMA: SKALA OTOMATIS UNTUK HP
+           ========================================= */
+        @media (max-width: 1024px) {
+            #ui-layer {
+                width: 1200px !important; 
+                height: 800px !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform-origin: top left !important;
+                transform: translate(-50%, -50%) scale(calc(100vw / 1200)) !important; 
+            }
+            #webcam-feed, #video-overlay, #fallback-bg {
+                width: 100vw !important; height: 100vh !important;
+                transform: none !important; left: 0 !important; top: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-white select-none overflow-hidden">
+
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p class="mt-4 text-amber-300 font-bold">Memuat Karakter...</p>
+    </div>
+
+    <div id="fallback-bg"></div>
+    <video id="webcam-feed" playsinline autoplay muted></video>
+    <div id="video-overlay"></div>
+    <canvas id="particles-canvas"></canvas>
+    <div id="toast-container"></div>
+
+    <div id="pinch-cursor"
+         class="w-12 h-12 rounded-full border-4 border-cyan-300 bg-cyan-400/30 flex items-center justify-center hidden"
+         style="box-shadow: 0 0 20px rgba(34, 211, 238, 0.7);">
+        <div class="w-2.5 h-2.5 bg-white rounded-full"></div>
+        <div id="carried-color-bubble"
+             class="absolute -top-4 -right-4 w-8 h-8 rounded-full border-2 border-white shadow-lg hidden"></div>
+    </div>
+    
+    <div id="part-hold-ring" class="hidden">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle class="phr-bg" cx="50" cy="50" r="45" />
+            <circle class="phr-fill" cx="50" cy="50" r="45" />
+        </svg>
+    </div>
+
+    <div id="ui-layer" class="relative w-full h-screen overflow-hidden">
+        
+        <div class="top-bar">
+            <div class="flex gap-6 items-start">
+                <div class="target-card">
+                    <div class="w-full flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-amber-300 tracking-wider uppercase">TARGET</span>
+                    </div>
+                    <div class="target-svg-container">
+                        <div id="target-svg-holder" class="w-full h-full flex items-center justify-center p-2"></div>
+                    </div>
+                    <div class="progress-section">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] font-bold text-slate-300 uppercase">PROGRESS</span>
+                            <span id="match-percentage" class="text-sm font-black text-amber-300">0%</span>
+                        </div>
+                        <div class="progress-big-bar" style="height: 8px;">
+                            <div id="progress-bar" class="progress-big-fill" style="width: 0%;"></div>
+                        </div>
+                        <div class="mt-3 flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-amber-900/50 border border-amber-400/40">
+                            <i class="fa-solid fa-star text-amber-400 text-sm"></i>
+                            <span id="total-stars-badge" class="text-base font-black text-amber-200">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="parts-list" class="parts-list-vertical">
+                    <!-- diisi oleh JS -->
+                </div>
+            </div>
+
+            <button id="back-menu-top" class="back-btn-circle hold-button" title="Kembali ke Menu">
+                <svg class="hold-ring" viewBox="0 0 100 100">
+                    <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="ring-fill" cx="50" cy="50" r="45"></circle>
+                </svg>
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+        </div>
+
+        <div id="character-container" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div id="svg-holder" class="w-full h-full max-w-2xl lg:max-w-3xl flex items-center justify-center pointer-events-auto p-20"></div>
+        </div>
+
+        <div class="bottom-bar">
+            <div class="palette-grid" id="color-palette">
+                <!-- diisi oleh JS -->
+            </div>
+
+            <div class="side-actions">
+                <button id="change-char-btn" class="hold-button" data-action="change-char"
+                    style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">
+                    <svg class="hold-ring" viewBox="0 0 100 100">
+                        <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="ring-fill" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                </button>
+
+                <button id="change-color-btn" class="hold-button" data-action="change-color"
+                    style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
+                    <svg class="hold-ring" viewBox="0 0 100 100">
+                        <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="ring-fill" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    <i class="fa-solid fa-palette"></i>
+                </button>
+
+                <button id="reset-btn" class="hold-button" data-action="reset"
+                    style="background:linear-gradient(135deg,#ef4444,#dc2626);">
+                    <svg class="hold-ring" viewBox="0 0 100 100">
+                        <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="ring-fill" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    <i class="fa-solid fa-broom"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="absolute bottom-1 left-100 right-9 flex justify-start pointer-events-none z-50">
+             <div class="glass-panel rounded-full px-4 py-1.5 flex items-center gap-2 text-xs text-slate-300 pointer-events-auto">
+                <span id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="hint-icon">👆</span>
+                <span id="hint-message">Cubit warna di palet samping!</span>
+             </div>
+        </div>
+    </div>
+
+    <div id="target-popup-container" style="display: none; position: fixed; inset: 0; z-index: 2147483647; align-items: center; justify-content: center; pointer-events: none; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px);">
+        <div id="target-popup-inner" style="background: rgba(30, 41, 59, 0.95); border: 4px solid #fbbf24; border-radius: 30px; padding: 40px; box-shadow: 0 0 80px rgba(0,0,0,0.8); width: 80vw; height: 80vh; max-width: 600px; max-height: 600px; display: flex; align-items: center; justify-content: center;">
+        </div>
+    </div>
+
+    <div id="victory-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl max-w-md w-full text-center border-amber-400/30 shadow-2xl transform scale-90 transition-transform duration-300" id="modal-card">
+            <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-yellow-300 rounded-full mx-auto flex items-center justify-center text-slate-950 text-4xl font-black shadow-lg mb-4 animate-bounce">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <h2 class="text-2xl font-black text-amber-300 tracking-wide mb-1">KARAKTER SELESAI! 🎉</h2>
+            <p class="text-sm text-slate-200 mb-4" id="victory-char-name">Robot</p>
+            <div class="star-rating" id="victory-stars">⭐⭐⭐</div>
+
+            <button id="next-level-btn" class="hold-button w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-bold text-sm shadow-xl hover:brightness-110 transition-all mt-4 relative">
+                <svg class="hold-ring" viewBox="0 0 100 100">
+                    <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="ring-fill" cx="50" cy="50" r="45"></circle>
+                </svg>
+                Lanjut Karakter Berikutnya <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="celebration-modal" class="celebration-modal">
+        <div class="celebration-card">
+            <div class="text-5xl mb-2">🏆</div>
+            <h2 class="text-2xl md:text-3xl font-black text-amber-300 tracking-wide mb-2">HEBAT! 🎉</h2>
+            <p class="text-sm text-slate-300 mb-4">
+                Kamu sudah selesaikan <span id="celebration-count" class="font-black text-amber-300">3</span> karakter!
+            </p>
+            <div class="my-4">
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-2">Statistik Sesi Ini</div>
+                <div class="stat-row"><span class="stat-label"><i class="fa-solid fa-clock text-cyan-400"></i> Waktu Total</span><span class="stat-value" id="stat-time">0:00</span></div>
+                <div class="stat-row"><span class="stat-label"><i class="fa-solid fa-hand-pointer text-indigo-400"></i> Total Cubitan</span><span class="stat-value" id="stat-pinches">0</span></div>
+                <div class="stat-row"><span class="stat-label"><i class="fa-solid fa-bullseye text-emerald-400"></i> Akurasi</span><span class="stat-value good" id="stat-accuracy">100%</span></div>
+                <div class="stat-row"><span class="stat-label"><i class="fa-solid fa-star text-amber-400"></i> Total Bintang</span><span class="stat-value" id="stat-stars">0</span></div>
+            </div>
+            <div class="bg-indigo-900/40 border border-indigo-400/30 rounded-xl p-3 mb-4">
+                <div class="text-[10px] uppercase tracking-widest text-indigo-300 mb-1">Karakter Berikutnya</div>
+                <div class="text-lg font-black text-white" id="next-char-name">🐶 Anjing</div>
+            </div>
+            <div class="flex flex-col gap-2">
+                <button id="celebration-continue-btn" class="hold-button w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-bold text-sm shadow-xl hover:brightness-110 transition-all relative">
+                    <svg class="hold-ring" viewBox="0 0 100 100">
+                        <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="ring-fill" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    🎯 Lanjut Main
+                </button>
+                <button id="celebration-pause-btn" class="hold-button w-full py-2 px-6 rounded-2xl bg-slate-700/60 text-slate-200 font-semibold text-xs hover:bg-slate-700 transition-all relative">
+                    <svg class="hold-ring" viewBox="0 0 100 100">
+                        <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="ring-fill" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    ⏸️ Istirahat Dulu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="rest-modal" class="rest-modal">
+        <div class="rest-card">
+            <div class="text-6xl mb-4">🌙</div>
+            <h2 class="text-3xl font-black text-indigo-300 tracking-wide mb-4">ISTIRAHAT DULU</h2>
+            <p class="text-base text-slate-300 mb-6 leading-relaxed">
+                Kamu sudah selesaikan<br>
+                <span id="rest-count" class="text-2xl font-black text-amber-300">3</span>
+                <span class="text-slate-400">dari</span>
+                <span id="rest-total" class="text-2xl font-black text-cyan-300">25</span>
+                <span class="text-slate-400">karakter!</span>
+            </p>
+            <div class="bg-slate-900/60 rounded-2xl p-4 mb-6">
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <i class="fa-solid fa-star text-amber-400 text-3xl"></i>
+                    <span id="rest-stars" class="text-3xl font-black text-amber-300">0</span>
+                </div>
+                <div class="text-xs text-slate-400 uppercase tracking-widest">Total Bintang</div>
+            </div>
+            <p class="text-lg text-indigo-200 mb-6 font-bold">Sampai jumpa lagi! 👋</p>
+            <button id="rest-restart-btn" class="hold-button w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black text-base shadow-xl hover:brightness-110 transition-all relative">
+                <svg class="hold-ring" viewBox="0 0 100 100">
+                    <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="ring-fill" cx="50" cy="50" r="45"></circle>
+                </svg>
+                🔄 Main Lagi
+            </button>
+            <p class="text-[10px] text-slate-500 mt-3">Karakter tetap sama (tidak diacak ulang)</p>
+        </div>
+    </div>
+
+    <script src="characters.js"></script>
+    <script type="module" src="game1p.js"></script>
+	
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const targetCard = document.querySelector('.target-card');
+            const targetSvgHolder = document.getElementById('target-svg-holder');
+            const popupContainer = document.getElementById('target-popup-container');
+            const popupInner = document.getElementById('target-popup-inner');
+
+            const showPopup = () => {
+                const svg = targetSvgHolder.querySelector('svg');
+                if (svg && popupInner.children.length === 0) {
+                    popupInner.appendChild(svg);
+                    popupContainer.style.display = 'flex';
+                }
+            };
+
+            const hidePopup = () => {
+                const svgInPopup = popupInner.querySelector('svg');
+                if (svgInPopup) {
+                    targetSvgHolder.appendChild(svgInPopup);
+                    popupContainer.style.display = 'none';
+                }
+            };
+
+            targetCard.addEventListener('pointerdown', (e) => {
+                if (e.pointerType === 'mouse' || e.pointerType === 'touch') {
+                    showPopup();
+                }
+            });
+
+            window.addEventListener('pointerup', hidePopup);
+
+            targetCard.addEventListener('mouseenter', () => {
+                showPopup();
+            });
+            
+            targetCard.addEventListener('mouseleave', () => {
+                hidePopup();
+            });
+        });
+    </script>
+</body>
+</html>

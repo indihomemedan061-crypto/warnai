@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=3.0, user-scalable=yes">
+    <title>Pinch & Color Match — Menu</title>
+	<script src="tailwind.js"></script>
+	<link rel="stylesheet" href="fontawesome.min.css">
+	<link href="google-fonts.css" rel="stylesheet">
+	<script src="confetti.min.js"></script>
+	<script src="html2canvas.min.js"></script>
+    <style>
+        * { font-family: 'Fredoka', 'Quicksand', sans-serif; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+        body {
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 70%, #020617 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 24px;
+            color: #fff;
+            padding: 24px;
+            overflow: auto;
+			height: auto;
+			min-height: 100vh;
+        }
+		h1 {
+			font-size: clamp(2rem, 7vw, 4.5rem) !important;
+			font-weight: 900;
+			letter-spacing: 1px;
+			text-align: center;
+			margin: 0;
+			padding: 8px 24px;
+			border: 5px solid rgba(255, 255, 255, 0.1);
+			border-radius: 16px;
+			background: rgba(15, 23, 42, 0.7);
+			backdrop-filter: blur(8px);
+			color: #fbbf24;
+		}
+        .subtitle { color: #94a3b8; font-size: 1rem; margin: 0; }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            max-width: 680px;
+            width: 100%;
+        }
+        .menu-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.5));
+            border: 5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0 px;
+            position: relative;
+            overflow: visible;
+        }
+        .menu-card:hover {
+            transform: translateY(-6px) scale(1.03);
+        }
+        .menu-card.single { border-color: rgba(34, 197, 94, 0.5); }
+        .menu-card.single:hover { border-color: #22c55e; box-shadow: 0 20px 60px rgba(34, 197, 94, 0.5); }
+        .menu-card.multi { border-color: rgba(239, 68, 68, 0.5); }
+        .menu-card.multi:hover { border-color: #ef4444; box-shadow: 0 20px 60px rgba(239, 68, 68, 0.5); }
+
+        .menu-icon { font-size: 15rem; line-height: 1.3; }
+        .menu-title { font-size: 3rem; font-weight: 800; }
+        .menu-desc { font-size: 1rem; color: #94a3b8; line-height: 1; }
+
+        /* HOLD RING di kartu */
+        .menu-card .hold-ring {
+			position: absolute;
+			top: 50%; left: 50%;
+			transform: translate(-50%, -50%) rotate(-90deg);
+			width: 80px; height: 80px;
+			pointer-events: none;
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+        }
+        .menu-card.pressing .hold-ring { opacity: 1; }
+        .menu-card .hold-ring circle {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+        }
+        .menu-card .hold-ring .ring-bg { stroke: rgba(255, 255, 255, 0.15); }
+        .menu-card .hold-ring .ring-fill {
+            stroke: #22c55e;
+            transition: stroke 0.2s ease;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+        }
+        .menu-card.pressing { transform: scale(0.97); }
+        .menu-card.triggered {
+            animation: menuTrigger 0.4s ease-out;
+        }
+        @keyframes menuTrigger {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.08); filter: brightness(1.6); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        /* KURSOR PINCH */
+        #pinch-cursor {
+			display: block;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 4px solid #22d3ee;
+            background: rgba(34, 211, 238, 0.25);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.7);
+            display: none;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        #pinch-cursor.active { display: block; }
+        #pinch-cursor.pinched-active {
+			display: block;
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.35);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.95);
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+
+        /* HINT BAWAH */
+        #hint {
+            position: fixed;
+            top: 135px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            font-weight: 600;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 16px;
+            border-radius: 999px;
+            backdrop-filter: blur(8px);
+        }
+
+        @media (max-width: 520px) {
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align:center;">
+        <h1>🎨 PINCH & COLOR MATCH</h1>
+    </div>
+
+    <div class="menu-grid">
+        <a href="1p.html" class="menu-card single" data-url="1p.html">
+            <div class="menu-icon">👤</div>
+            <div class="menu-title">1 PEMAIN</div>
+            <div class="menu-desc">Main sendiri,<br>selesaikan semua karakter</div>
+        </a>
+
+        <a href="2p.html" class="menu-card multi" data-url="2p.html">
+            <div class="menu-icon">👥</div>
+            <div class="menu-title">2 PEMAIN</div>
+            <div class="menu-desc">Balapan! Siapa cepat,<br>ia yang menang.<br>max 5 ronde</div>
+        </a>
+    </div>
+
+    <div id="hint">👆 Cubit + Tahan kartu selama 1 detik</div>
+	<svg id="cursor-ring" viewBox="0 0 100 100" style="position:fixed;width:70px;height:70px;pointer-events:none;z-index:9998;transform:translate(-50%,-50%) rotate(-90deg);opacity:0;transition:opacity 0.2s;">
+    <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="6"></circle>
+    <circle id="cursor-ring-fill" cx="50" cy="50" r="45" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="283"></circle>
+	</svg>
+    <div id="pinch-cursor">
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#fff;border-radius:50%;"></div>
+    </div>
+
+    <script type="module">
+        import { HandLandmarker, FilesetResolver } from './vision_bundle.mjs';
+
+        const videoElement = document.createElement('video');
+        videoElement.playsInline = true;
+        videoElement.autoplay = true;
+        videoElement.muted = true;
+        videoElement.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;transform:scaleX(-1);z-index:-1;opacity:1.5;';
+        document.body.appendChild(videoElement);
+
+        const cursorEl = document.getElementById('pinch-cursor');
+        const cards = document.querySelectorAll('.menu-card');
+
+        const HOLD_DURATION = 1000;
+        const PINCH_GRAB = 0.07;
+        const PINCH_RELEASE = 0.12;
+        const DEBOUNCE = 3;
+
+        let handLandmarker = null;
+        let lastVideoTime = -1;
+        let confirmedPinching = false;
+        let pinchStateBuffer = [];
+        let currentHold = null;
+
+        async function initHandLandmarker() {
+            try {
+                const vision = await FilesetResolver.forVisionTasks('./wasm/');
+                handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                    baseOptions: { modelAssetPath: './hand_landmarker.task', delegate: 'GPU' },
+                    runningMode: 'VIDEO',
+                    numHands: 1,
+                    minHandDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+                return true;
+            } catch (err) {
+                console.warn('MediaPipe gagal, pakai mouse.', err);
+                return false;
+            }
+        }
+
+        async function startCamera() {
+            const ok = await initHandLandmarker();
+            if (!ok) return;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+                    audio: false
+                });
+                videoElement.srcObject = stream;
+                await new Promise(r => {
+                    if (videoElement.readyState >= 1) return r();
+                    videoElement.onloadedmetadata = () => r();
+                });
+                startLoop();
+            } catch (err) {
+                console.warn('Kamera gagal:', err);
+            }
+        }
+
+        function startLoop() {
+            function loop() {
+                if (videoElement.readyState >= 2 && videoElement.videoWidth > 0 &&
+                    videoElement.currentTime !== lastVideoTime && handLandmarker) {
+                    lastVideoTime = videoElement.currentTime;
+                    try {
+                        const r = handLandmarker.detectForVideo(videoElement, performance.now());
+                        onResults(r);
+                    } catch (e) {}
+                }
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        function onResults(results) {
+            const W = window.innerWidth, H = window.innerHeight;
+
+            if (!results.landmarks || results.landmarks.length === 0) {
+                cursorEl.classList.remove('active');
+                cancelHold();
+                return;
+            }
+
+            const lm = results.landmarks[0];
+            const thumb = lm[4], index = lm[8];
+            const x = (1 - (thumb.x + index.x) / 2) * W;
+            const y = ((thumb.y + index.y) / 2) * H;
+            const dist = Math.hypot(thumb.x - index.x, thumb.y - index.y);
+
+            let raw = confirmedPinching ? dist < PINCH_RELEASE : dist < PINCH_GRAB;
+            pinchStateBuffer.push(raw);
+            if (pinchStateBuffer.length > DEBOUNCE) pinchStateBuffer.shift();
+
+            let stable = confirmedPinching;
+            if (pinchStateBuffer.length >= DEBOUNCE) {
+                if (!confirmedPinching && pinchStateBuffer.every(v => v)) stable = true;
+                else if (confirmedPinching && pinchStateBuffer.every(v => !v)) stable = false;
+            }
+
+            const was = confirmedPinching;
+            confirmedPinching = stable;
+
+            cursorEl.style.left = x + 'px';
+            cursorEl.style.top = y + 'px';
+            cursorEl.classList.add('active');
+            cursorEl.classList.toggle('pinched-active', confirmedPinching);
+			cursorRing.style.left = x + 'px';
+			cursorRing.style.top = y + 'px';
+
+            if (!was && confirmedPinching) {
+                // pinch mulai
+                const el = document.elementFromPoint(x, y);
+                const card = el && el.closest('.menu-card');
+                if (card) startHold(card);
+            }
+            if (was && !confirmedPinching) {
+                cancelHold();
+            }
+        }
+
+const cursorRing = document.getElementById('cursor-ring');
+const cursorRingFill = document.getElementById('cursor-ring-fill');
+
+function startHold(card) {
+    if (currentHold && currentHold.card === card) return;
+    cancelHold();
+    currentHold = { card, startTime: Date.now() };
+    card.classList.add('pressing');
+    cursorRing.style.opacity = '1';
+    cursorRingFill.style.strokeDashoffset = 283;
+    updateHold();
+}
+
+function updateHold() {
+    if (!currentHold) return;
+    const elapsed = Date.now() - currentHold.startTime;
+    const progress = Math.min(elapsed / HOLD_DURATION, 1);
+
+    cursorRingFill.style.strokeDashoffset = 283 * (1 - progress);
+    let color = '#22c55e';
+    if (progress > 0.85) color = '#ef4444';
+    else if (progress > 0.6) color = '#f97316';
+    else if (progress > 0.3) color = '#facc15';
+    cursorRingFill.style.stroke = color;
+
+    if (progress >= 1) {
+        const url = currentHold.card.dataset.url;
+        currentHold.card.classList.remove('pressing');
+        currentHold.card.classList.add('triggered');
+        currentHold = null;
+        cursorRing.style.opacity = '0';
+        setTimeout(() => { window.location.href = url; }, 200);
+        return;
+    }
+    requestAnimationFrame(updateHold);
+}
+
+function cancelHold() {
+    if (!currentHold) return;
+    currentHold.card.classList.remove('pressing');
+    cursorRing.style.opacity = '0';
+    cursorRingFill.style.strokeDashoffset = 283;
+    currentHold = null;
+}
+        // Fallback mouse (klik) — selalu bisa klik pakai mouse
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Jangan trigger kalau gesture pinch sedang hold kartu ini
+                if (currentHold && currentHold.card === card) return;
+                card.classList.add('triggered');
+                setTimeout(() => {
+                    window.location.href = card.dataset.url;
+                }, 150);
+            });
+        });
+
+        window.addEventListener('load', startCamera);
+    </script>
+</body>
+</html>
