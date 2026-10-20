@@ -389,152 +389,88 @@
             border-color: #ffffff !important; border-width: 5px !important;
         }
         
-		/* Styling khusus untuk HP Mode Landscape (Sangat Efektif) */
-		@media screen and (max-width: 932px) and (orientation: landscape), screen and (max-height: 500px) {
-			
-			/* 1. Paksa container UI pas dengan layar HP */
-			#ui-layer {
-				width: 100vw !important;
-				height: 100vh !important;
-				position: fixed !important;
-				top: 0 !important;
-				left: 0 !important;
-				padding: 6px 12px !important;
-				box-sizing: border-box !important;
-				overflow: hidden !important;
-				display: flex !important;
-				flex-direction: column !important;
-				justify-content: space-between !important;
-			}
+@media screen and (max-width: 1024px), screen and (max-height: 500px) {
+    /* 1. Paksa seluruh layar UI menduplikasi ukuran ruang kerja desktop */
+    #ui-layer {
+        width: 1200px !important;
+        height: 800px !important;
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform-origin: center center !important;
+        /* Kalkulasi otomatis menyusutkan layout desktop agar pas masuk layar HP */
+        transform: translate(-50%, -50%) scale(calc(100vw / 1200)) !important;
+        overflow: hidden !important;
+        display: block !important;
+        padding: 0 !important;
+    }
 
-			/* 2. Top Bar (Target & List Bagian) - Dibuat Sangat Kompak */
-			.top-bar {
-				position: relative !important;
-				top: 0 !important;
-				left: 0 !important;
-				right: 0 !important;
-				display: flex !important;
-				justify-content: space-between !important;
-				align-items: flex-start !important;
-				z-index: 50;
-			}
+    /* 2. Pastikan karakter tetap di tengah persis seperti desktop */
+    #character-container {
+        position: absolute !important;
+        inset: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding-left: 315px !important; /* Mengikuti posisi desktop asli */
+        transform: scale(1.25) !important; /* Ukuran besar persis desktop */
+        z-index: 5 !important;
+        pointer-events: none !important;
+    }
 
-			.target-card {
-				width: 110px !important;
-				padding: 4px 6px !important;
-				border-radius: 8px !important;
-			}
+    #svg-holder {
+        pointer-events: auto !important;
+    }
 
-			.target-card .target-svg-container {
-				width: 45px !important;
-				height: 45px !important;
-				margin-bottom: 2px !important;
-			}
+    /* 3. Posisi Top-Bar (Target & List) persis desktop */
+    .top-bar {
+        position: absolute !important;
+        top: 20px !important;
+        left: 20px !important;
+        right: 20px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        z-index: 50;
+        pointer-events: none !important;
+    }
+    .top-bar > * { pointer-events: auto !important; }
 
-			.target-card .progress-section span,
-			.target-card .text-xs {
-				font-size: 0.5rem !important;
-			}
+    /* 4. Posisi Bottom-Bar (Palet Warna & Tombol Aksi) persis desktop */
+    .bottom-bar {
+        position: absolute !important;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: 20px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-end !important;
+        z-index: 50;
+        pointer-events: none !important;
+    }
+    .bottom-bar > * { pointer-events: auto !important; }
 
-			.progress-big-bar {
-				height: 4px !important;
-			}
+    /* 5. Tombol aksi samping di kanan bawah tersusun rapi horizontal/vertikal seperti desktop */
+    .side-actions {
+        position: absolute !important;
+        right: 20px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        z-index: 50;
+    }
 
-			.target-card .mt-3 {
-				margin-top: 2px !important;
-				padding: 1px !important;
-			}
-
-			.parts-list-vertical {
-				padding: 4px 8px !important;
-				gap: 2px !important;
-				border-radius: 8px !important;
-			}
-
-			.part-item {
-				font-size: 0.6rem !important;
-				gap: 4px !important;
-			}
-
-			.part-item .part-status {
-				width: 8px !important;
-				height: 8px !important;
-			}
-
-			/* 3. Posisi Karakter di Tengah */
-			#character-container {
-				position: absolute !important;
-				inset: 0 !important;
-				display: flex !important;
-				align-items: center !important;
-				justify-content: center !important;
-				padding-left: 0 !important;
-				transform: scale(0.5) !important; /* Diperkecil agar tidak menabrak bar atas & bawah */
-				z-index: 5 !important;
-				pointer-events: none !important;
-			}
-
-			#svg-holder {
-				pointer-events: auto !important;
-			}
-
-			/* 4. Bottom Bar (Palet Warna & Tombol Aksi) */
-			.bottom-bar {
-				position: relative !important;
-				bottom: 0 !important;
-				left: 0 !important;
-				right: 0 !important;
-				display: flex !important;
-				justify-content: space-between !important;
-				align-items: flex-end !important;
-				z-index: 50;
-			}
-
-			.palette-grid {
-				width: auto !important;
-				max-width: 75vw !important;
-				padding: 4px !important;
-				gap: 4px !important;
-				border-radius: 8px !important;
-				background: rgba(15, 23, 42, 0.7);
-			}
-
-			.palette-grid .color-swatch {
-				width: 24px !important;
-				height: 24px !important;
-				border-width: 1.5px !important;
-			}
-
-			.side-actions {
-				position: relative !important;
-				right: auto !important;
-				top: auto !important;
-				transform: none !important;
-				flex-direction: row !important;
-				gap: 4px !important;
-			}
-
-			.side-actions button, .back-btn-circle {
-				width: 30px !important;
-				height: 30px !important;
-				border-radius: 6px !important;
-			}
-
-			.side-actions button i, .back-btn-circle i {
-				font-size: 0.7rem !important;
-			}
-
-			.side-actions button span {
-				display: none !important;
-			}
-
-			#back-menu-top {
-				width: 30px !important;
-				height: 30px !important;
-				border-radius: 6px !important;
-				font-size: 0.75rem !important;
-			}
-		}
+    /* 6. Kamera & Background Fullscreen */
+    #webcam-feed, #video-overlay, #fallback-bg {
+        width: 100vw !important;
+        height: 100vh !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+    }
+}
     </style>
 </head>
 <body class="text-white select-none overflow-hidden">
