@@ -23,7 +23,7 @@
 
         body {
             background: #0f172a;
-            min-height: 100vh;
+            min-height: 150vh;
             overflow: auto;
             height: auto;
             margin: 0;
@@ -34,7 +34,7 @@
             display: flex;
             align-items: center;
             gap: 10px; 
-            font-size: 1rem; 
+            font-size: 1.75rem; 
             font-weight: 700;
             color: #e2e8f0;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -327,39 +327,55 @@
         .top-bar > * { pointer-events: auto; }
         
         .target-card {
-            border-radius: 20px; padding: 16px; width: 305px;
+            border-radius: 20px; padding: 16px; width: 355px;
             display: flex; flex-direction: column; align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
         .target-card .target-svg-container {
-            width: 170px; height: 170px; border-radius: 16px;
+            width: 270px; height: 370px; border-radius: 16px;
             display: flex; align-items: center; justify-content: center; margin-bottom: 12px;
         }
         .target-card .progress-section { width: 100%; }
         .target-card .progress-section span { font-size: 0.85rem; }
         
         .parts-list-vertical {
-            display: flex; flex-direction: column; gap: 12px; padding: 16px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4); border-radius: 16px;
+            display: flex; 
+			flex-direction: column; 
+			gap: 12px; 
+			padding: 16px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+			border-radius: 16px;
+			width: 230px; height: 470px;
         }
         
         .bottom-bar {
-            position: absolute; bottom: 30px; left: 20px; right: 20px;
+            position: absolute; bottom: 120px; left: 20px; right: 20px;
             display: flex; justify-content: space-between; align-items: flex-end;
             z-index: 50; pointer-events: none;
         }
         .bottom-bar > * { pointer-events: auto; }
         
         .palette-grid {
-            display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
-            gap: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            border-radius: 16px; width: 485px;
+            display: flex; 
+			flex-wrap: wrap; 
+			justify-content: center; 
+			align-content: center;
+            gap: 14px; 
+			padding: 20px; 
+			box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border-radius: 16px; 
+			width: 585px;
+			height: 485px;
+			
         }
         .palette-grid .color-swatch {
-            width: calc(25% - 11px); height: 135px; flex-shrink: 0;
+            width: calc(25% - 11px); 
+			height: 135px; 
+			flex-shrink: 0;
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 4px solid rgba(255, 255, 255, 0.5);
-            position: relative; cursor: pointer; border-radius: 50%;
+            position: relative; cursor: 
+			pointer; border-radius: 50%;
         }
         
         .side-actions {
@@ -367,21 +383,35 @@
             right: 20px; top: 50%; transform: translateY(-50%); z-index: 50;
         }
         .side-actions button {
-            width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; color: #fff;
+            width: 110px; 
+			height: 110px; 
+			border-radius: 50%; 
+			border: 3px solid #fff; 
+			color: #fff;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+            gap: 4px; cursor: pointer; box-shadow: 0 15px 15px rgba(0,0,0,0.5);
         }
-        .side-actions button i { font-size: 1.6rem; }
-        .side-actions button span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
+        .side-actions button i { font-size: 3rem; }
+        .side-actions button span { font-size: 3rem; font-weight: 800; text-transform: uppercase; }
         
         .back-btn-circle {
-            width: 60px; height: 60px; border-radius: 16px;
-            background: rgba(148, 163, 184, 0.25); border: 2px solid rgba(255,255,255,0.3); color: #e2e8f0;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.5rem;
-            transition: all 0.2s ease; position: relative; pointer-events: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            width: 90px; 
+			height: 90px; 
+			border-radius: 16px;
+            background: rgba(148, 163, 184, 0.25); 
+			border: 2px solid rgba(255,255,255,0.3); 
+			color: #e2e8f0;
+            display: flex; 
+			align-items: center; 
+			justify-content: center; 
+			cursor: pointer; font-size: 3rem;
+            transition: all 0.2s ease; 
+			position: relative; 
+			pointer-events: auto; 
+			box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
-        #character-container { padding-left: 315px; transform: scale(1.25); }
+        #character-container { padding-left: 455px; transform: scale(1.25); }
         
         .color-swatch.pinched-hover {
             transform: scale(1.12) rotate(3deg) !important;
@@ -392,112 +422,57 @@
 			position: fixed;
 			top: 125px;  
 			right: 20px;
-			width: 65px;
+			width: 95px;
+			height:65px;
 			margin-top: 0;
 			z-index: 99;
+			font-size: 2.5rem;
 		}
-        
-/* =========================================
-   PERBAIKAN TAMPILAN UNTUK HP / MOBILE
-   ========================================= */
-@media (max-width: 768px) {
-    /* 1. Perbaiki Karakter Utama (Jangan terlalu besar) */
-    #character-container {
-        padding-left: 0 !important;
-        transform: scale(1.5) !important; 
-        padding-top: 5px !important;
-		left: 135px !important;
-		right: 15px !important;
-    }
-	#star-box {
-        top: 85px !important;
-        right: 25px !important;
-        width: 50px !important;
-        padding: 4px !important;
-    }
-    #star-box span {
-        font-size: 0.7rem !important;
-    }
-    #star-box i {
-        font-size: 0.7rem !important;
-		}
-		    /* 2. Panel Target (Kiri Atas) */
-    .target-card {
-        width: 150px !important;
-        padding: 8px !important;
-    }
-    .target-card .target-svg-container {
-        width: 70px !important;
-        height: 70px !important;
-        margin-bottom: 1px !important;
-    }
-    .target-card .progress-section span {
-        font-size: 0.5rem !important;
-    }
+		 #star-box i {
+            font-size: 2rem ; 
+        }
+        #star-box #total-stars-badge {
+            font-size: 2rem; 
+        }
 
-    /* 3. Daftar Bagian (Kanan Target) */
-    .parts-list-vertical {
-        padding: 12px !important;
-        gap: 4px !important;
-        border-radius: 1px !important;
-        max-height: 150px !important;
-        overflow-y: auto !important;
-    }
-    .part-item {
-        font-size: 0.5rem !important;
-        gap: 4px !important;
-    }
+        /* ============================================================
+           LAYOUT TERKUNCI (STAGE) + ZOOM 10 TINGKAT
+           Ubah ukuran desain di sini DAN di konstanta JS (STAGE_W/STAGE_H)
+           ============================================================ */
+        :root { --stage-w: 1920px; --stage-h: 1080px; }
 
-    /* 4. Palet Warna (Kiri Bawah) - INI YANG PALING PENTING */
-    .palette-grid {
-        width: 235px !important; 
-		height: 165px !important;
-        padding: 15px !important;
-        gap: 8px !important;
-        border-radius: 16px !important;
-        position: absolute !important;
-		top: -150px !important;
-        left: 3px !important;
-    }
-    
-    /* Paksa ukuran swatch menjadi kecil dan presisi 4 kolom */
-    .palette-grid .color-swatch {
-        width: calc(25% - 7px) !important; /* 4 kotak dalam 1 baris */
-        height: 65px !important; /* Tinggi dipangkas */
-        border-width: 2px !important;
-        margin: 0 !important; /* Hapus margin bawaan jika ada */
-    }
+        #zoom-viewport {
+            position: fixed; inset: 0; z-index: 20;
+            display: flex; overflow: hidden;
+            scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.35) transparent;
+            overscroll-behavior: none;
+        }
+        #zoom-sizer { position: relative; flex: none; margin: auto; }
+        #stage {
+            position: absolute; top: 0; left: 0;
+            width: var(--stage-w); height: var(--stage-h);
+            transform-origin: 0 0;
+        }
+        /* paksa ukuran tetap, abaikan h-screen / w-full Tailwind */
+        #ui-layer { width: var(--stage-w) !important; height: var(--stage-h) !important; }
 
-    /* 5. Tombol Aksi Kanan */
-    .side-actions {
-        right: 10px !important;
-        gap: 8px !important;
-    }
-    .side-actions button {
-        width: 40px !important;
-        height: 40px !important;
-        border-width: 2px !important;
-		margin-bottom: 12px !important;
-		bottom: 75px !important;
-    }
-    .side-actions button i {
-        font-size: 1rem !important;
-    }
-
-    /* 6. Tombol Back Kanan Atas */
-    .back-btn-circle {
-        width: 45px !important;
-        height: 45px !important;
-        font-size: 1rem !important;
-		right: 12px !important;
-    }
-    
-    /* 7. Sembunyikan Teks Hint agar tidak menutupi layar */
-    .absolute.bottom-1 {
-        display: none !important; 
-    }
-}
-    </style>
+        #zoom-controls {
+            position: fixed; top: 8px; left: 50%; transform: translateX(-50%);
+            z-index: 60; display: flex; align-items: center; gap: 6px;
+            padding: 4px 8px; border-radius: 999px;
+            background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(8px); opacity: 0.55; transition: opacity 0.2s ease;
+        }
+        #zoom-controls:hover { opacity: 1; }
+        #zoom-controls button {
+            width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.12); color: #fff; font-size: 20px; font-weight: 700;
+            line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        #zoom-controls button:hover { background: rgba(255,255,255,0.25); }
+        #zoom-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+        #zoom-controls #zoom-reset-btn { width: auto; min-width: 74px; padding: 0 10px; border-radius: 999px; font-size: 12px; }
+ </style>
 </head>
 <body class="text-white select-none overflow-hidden">
 
@@ -510,7 +485,6 @@
     <video id="webcam-feed" playsinline autoplay muted></video>
     <div id="video-overlay"></div>
     <canvas id="particles-canvas"></canvas>
-    <div id="toast-container"></div>
 
     <div id="pinch-cursor"
          class="w-12 h-12 rounded-full border-4 border-cyan-300 bg-cyan-400/30 flex items-center justify-center hidden"
@@ -526,6 +500,11 @@
             <circle class="phr-fill" cx="50" cy="50" r="45" />
         </svg>
     </div>
+
+    <div id="zoom-viewport">
+    <div id="zoom-sizer">
+    <div id="stage">
+    <div id="toast-container"></div>
 
     <div id="ui-layer" class="relative w-full h-screen overflow-hidden">
         
@@ -568,7 +547,7 @@
         </div>
 
         <div id="character-container" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div id="svg-holder" class="w-full h-full max-w-2xl lg:max-w-3xl flex items-center justify-center pointer-events-auto p-20"></div>
+            <div id="svg-holder" class="w-full h-full max-w-3xl flex items-center justify-center pointer-events-auto p-20"></div>
         </div>
 
         <div class="bottom-bar">
@@ -613,6 +592,15 @@
                 <span id="hint-message">Cubit warna di palet samping!</span>
              </div>
         </div>
+    </div>
+    </div><!-- /stage -->
+    </div><!-- /zoom-sizer -->
+    </div><!-- /zoom-viewport -->
+
+    <div id="zoom-controls">
+        <button id="zoom-out-btn" type="button" title="Zoom out (-)" aria-label="Zoom out">&minus;</button>
+        <button id="zoom-reset-btn" type="button" title="Reset zoom (0)" aria-label="Reset zoom"><span id="zoom-label">100%</span></button>
+        <button id="zoom-in-btn" type="button" title="Zoom in (+)" aria-label="Zoom in">+</button>
     </div>
 
     <div id="target-popup-container" style="display: none; position: fixed; inset: 0; z-index: 2147483647; align-items: center; justify-content: center; pointer-events: none; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px);">
@@ -748,6 +736,84 @@
                 hidePopup();
             });
         });
+    </script>
+
+    <script>
+    (function () {
+        // ===== PENGATURAN =====
+        const STAGE_W = 1920, STAGE_H = 1080; // harus sama dengan --stage-w / --stage-h di CSS
+        const STEPS   = 10;    // 10x zoom in dan 10x zoom out
+        const IN_STEP = 0.10;  // tiap zoom in  +10% (maks 200%)
+        const OUT_STEP = 0.05; // tiap zoom out -5%  (min 50%)
+        const KEY = 'pcm1p_zoom_level';
+
+        const vp = document.getElementById('zoom-viewport');
+        const sizer = document.getElementById('zoom-sizer');
+        const stage = document.getElementById('stage');
+        const label = document.getElementById('zoom-label');
+        const inBtn = document.getElementById('zoom-in-btn');
+        const outBtn = document.getElementById('zoom-out-btn');
+        const resetBtn = document.getElementById('zoom-reset-btn');
+
+        let level = 0;
+        try { level = parseInt(localStorage.getItem(KEY), 10) || 0; } catch (e) {}
+        level = Math.max(-STEPS, Math.min(STEPS, level));
+
+        const mult = l => l >= 0 ? 1 + l * IN_STEP : 1 + l * OUT_STEP;
+
+        function apply(keepCenter) {
+            const fit = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
+            const s = fit * mult(level);
+            const w = Math.floor(STAGE_W * s), h = Math.floor(STAGE_H * s);
+
+            let rx = 0.5, ry = 0.5;
+            if (keepCenter && sizer.offsetWidth > vp.clientWidth) rx = (vp.scrollLeft + vp.clientWidth / 2) / sizer.offsetWidth;
+            if (keepCenter && sizer.offsetHeight > vp.clientHeight) ry = (vp.scrollTop + vp.clientHeight / 2) / sizer.offsetHeight;
+
+            sizer.style.width = w + 'px';
+            sizer.style.height = h + 'px';
+            stage.style.transform = 'scale(' + s + ')';
+            vp.style.overflow = level > 0 ? 'auto' : 'hidden';
+
+            vp.scrollLeft = Math.max(0, rx * w - vp.clientWidth / 2);
+            vp.scrollTop  = Math.max(0, ry * h - vp.clientHeight / 2);
+
+            label.textContent = Math.round(mult(level) * 100) + '%';
+            inBtn.disabled = level >= STEPS;
+            outBtn.disabled = level <= -STEPS;
+        }
+
+        function setLevel(l) {
+            level = Math.max(-STEPS, Math.min(STEPS, l));
+            try { localStorage.setItem(KEY, level); } catch (e) {}
+            apply(true);
+        }
+
+        inBtn.addEventListener('click', () => setLevel(level + 1));
+        outBtn.addEventListener('click', () => setLevel(level - 1));
+        resetBtn.addEventListener('click', () => setLevel(0));
+
+        window.addEventListener('keydown', e => {
+            if (e.key === '+' || e.key === '=') { e.preventDefault(); setLevel(level + 1); }
+            else if (e.key === '-' || e.key === '_') { e.preventDefault(); setLevel(level - 1); }
+            else if (e.key === '0') { e.preventDefault(); setLevel(0); }
+        });
+
+        let lastWheel = 0;
+        window.addEventListener('wheel', e => {
+            if (!e.ctrlKey) return;
+            e.preventDefault();
+            const now = Date.now();
+            if (now - lastWheel < 120) return;
+            lastWheel = now;
+            setLevel(level + (e.deltaY < 0 ? 1 : -1));
+        }, { passive: false });
+
+        window.addEventListener('resize', () => apply(true));
+        window.addEventListener('orientationchange', () => setTimeout(() => apply(true), 200));
+
+        apply(false);
+    })();
     </script>
 </body>
 </html>
