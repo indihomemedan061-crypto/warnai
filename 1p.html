@@ -344,7 +344,7 @@
         }
         
         .bottom-bar {
-            position: absolute; bottom: 20px; left: 20px; right: 20px;
+            position: absolute; bottom: 30px; left: 20px; right: 20px;
             display: flex; justify-content: space-between; align-items: flex-end;
             z-index: 50; pointer-events: none;
         }
@@ -356,7 +356,7 @@
             border-radius: 16px; width: 485px;
         }
         .palette-grid .color-swatch {
-            width: calc(25% - 11px); height: 125px; flex-shrink: 0;
+            width: calc(25% - 11px); height: 135px; flex-shrink: 0;
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 4px solid rgba(255, 255, 255, 0.5);
             position: relative; cursor: pointer; border-radius: 50%;
@@ -388,87 +388,113 @@
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.95), 0 0 40px rgba(255, 255, 255, 0.5) !important;
             border-color: #ffffff !important; border-width: 5px !important;
         }
+		#star-box {
+			position: fixed;
+			top: 125px;  
+			right: 20px;
+			width: 65px;
+			margin-top: 0;
+			z-index: 99;
+		}
         
-@media screen and (max-width: 1024px), screen and (max-height: 500px) {
-    /* 1. Paksa seluruh layar UI menduplikasi ukuran ruang kerja desktop */
-    #ui-layer {
-        width: 1200px !important;
-        height: 800px !important;
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform-origin: center center !important;
-        /* Kalkulasi otomatis menyusutkan layout desktop agar pas masuk layar HP */
-        transform: translate(-50%, -50%) scale(calc(100vw / 1200)) !important;
-        overflow: hidden !important;
-        display: block !important;
-        padding: 0 !important;
-    }
-
-    /* 2. Pastikan karakter tetap di tengah persis seperti desktop */
+/* =========================================
+   PERBAIKAN TAMPILAN UNTUK HP / MOBILE
+   ========================================= */
+@media (max-width: 768px) {
+    /* 1. Perbaiki Karakter Utama (Jangan terlalu besar) */
     #character-container {
+        padding-left: 0 !important;
+        transform: scale(1.5) !important; 
+        padding-top: 5px !important;
+		left: 135px !important;
+		right: 15px !important;
+    }
+	#star-box {
+        top: 85px !important;
+        right: 25px !important;
+        width: 50px !important;
+        padding: 4px !important;
+    }
+    #star-box span {
+        font-size: 0.7rem !important;
+    }
+    #star-box i {
+        font-size: 0.7rem !important;
+		}
+		    /* 2. Panel Target (Kiri Atas) */
+    .target-card {
+        width: 150px !important;
+        padding: 8px !important;
+    }
+    .target-card .target-svg-container {
+        width: 70px !important;
+        height: 70px !important;
+        margin-bottom: 1px !important;
+    }
+    .target-card .progress-section span {
+        font-size: 0.5rem !important;
+    }
+
+    /* 3. Daftar Bagian (Kanan Target) */
+    .parts-list-vertical {
+        padding: 12px !important;
+        gap: 4px !important;
+        border-radius: 1px !important;
+        max-height: 150px !important;
+        overflow-y: auto !important;
+    }
+    .part-item {
+        font-size: 0.5rem !important;
+        gap: 4px !important;
+    }
+
+    /* 4. Palet Warna (Kiri Bawah) - INI YANG PALING PENTING */
+    .palette-grid {
+        width: 235px !important; 
+		height: 165px !important;
+        padding: 15px !important;
+        gap: 8px !important;
+        border-radius: 16px !important;
         position: absolute !important;
-        inset: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding-left: 315px !important; /* Mengikuti posisi desktop asli */
-        transform: scale(1.25) !important; /* Ukuran besar persis desktop */
-        z-index: 5 !important;
-        pointer-events: none !important;
+		top: -150px !important;
+        left: 3px !important;
+    }
+    
+    /* Paksa ukuran swatch menjadi kecil dan presisi 4 kolom */
+    .palette-grid .color-swatch {
+        width: calc(25% - 7px) !important; /* 4 kotak dalam 1 baris */
+        height: 65px !important; /* Tinggi dipangkas */
+        border-width: 2px !important;
+        margin: 0 !important; /* Hapus margin bawaan jika ada */
     }
 
-    #svg-holder {
-        pointer-events: auto !important;
-    }
-
-    /* 3. Posisi Top-Bar (Target & List) persis desktop */
-    .top-bar {
-        position: absolute !important;
-        top: 20px !important;
-        left: 20px !important;
-        right: 20px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: flex-start !important;
-        z-index: 50;
-        pointer-events: none !important;
-    }
-    .top-bar > * { pointer-events: auto !important; }
-
-    /* 4. Posisi Bottom-Bar (Palet Warna & Tombol Aksi) persis desktop */
-    .bottom-bar {
-        position: absolute !important;
-        bottom: 20px !important;
-        left: 20px !important;
-        right: 20px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: flex-end !important;
-        z-index: 50;
-        pointer-events: none !important;
-    }
-    .bottom-bar > * { pointer-events: auto !important; }
-
-    /* 5. Tombol aksi samping di kanan bawah tersusun rapi horizontal/vertikal seperti desktop */
+    /* 5. Tombol Aksi Kanan */
     .side-actions {
-        position: absolute !important;
-        right: 20px !important;
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 16px !important;
-        z-index: 50;
+        right: 10px !important;
+        gap: 8px !important;
+    }
+    .side-actions button {
+        width: 40px !important;
+        height: 40px !important;
+        border-width: 2px !important;
+		margin-bottom: 12px !important;
+		bottom: 75px !important;
+    }
+    .side-actions button i {
+        font-size: 1rem !important;
     }
 
-    /* 6. Kamera & Background Fullscreen */
-    #webcam-feed, #video-overlay, #fallback-bg {
-        width: 100vw !important;
-        height: 100vh !important;
-        top: 0 !important;
-        left: 0 !important;
-        transform: none !important;
+    /* 6. Tombol Back Kanan Atas */
+    .back-btn-circle {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1rem !important;
+		right: 12px !important;
+    }
+    
+    /* 7. Sembunyikan Teks Hint agar tidak menutupi layar */
+    .absolute.bottom-1 {
+        display: none !important; 
     }
 }
     </style>
@@ -504,7 +530,7 @@
     <div id="ui-layer" class="relative w-full h-screen overflow-hidden">
         
         <div class="top-bar">
-            <div class="flex gap-6 items-start">
+            <div class="flex gap-1 items-start">
                 <div class="target-card">
                     <div class="w-full flex items-center justify-between mb-3">
                         <span class="text-xs font-bold text-amber-300 tracking-wider uppercase">TARGET</span>
@@ -520,10 +546,10 @@
                         <div class="progress-big-bar" style="height: 8px;">
                             <div id="progress-bar" class="progress-big-fill" style="width: 0%;"></div>
                         </div>
-                        <div class="mt-3 flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-amber-900/50 border border-amber-400/40">
-                            <i class="fa-solid fa-star text-amber-400 text-sm"></i>
-                            <span id="total-stars-badge" class="text-base font-black text-amber-200">0</span>
-                        </div>
+					<div id="star-box" class="mt-3 flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-amber-900/50 border border-amber-400/40">
+						<i class="fa-solid fa-star text-amber-400 text-sm"></i>
+						<span id="total-stars-badge" class="text-base font-black text-amber-200">0</span>
+					</div>
                     </div>
                 </div>
 
