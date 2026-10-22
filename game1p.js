@@ -7,8 +7,7 @@
    - Semua fitur game tetap sama
    ============================================================ */
 
-import * as vision from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs';
-const { HandLandmarker, FilesetResolver } = vision;
+
 
 /* ============================================================
    1. PALETTE KONTRAS
@@ -1051,11 +1050,18 @@ const HAND_CONNECTIONS = [
 
 async function initHandLandmarker() {
     try {
-        console.log('📦 Loading FilesetResolver...');
-        const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+        console.log('📦 Loading MediaPipe from CDN...');
         
+        // Load module secara dinamis dari CDN (tanpa file lokal)
+        const vision = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+        const { HandLandmarker, FilesetResolver } = vision;
+
         console.log('🤖 Creating HandLandmarker...');
-        handLandmarker = await HandLandmarker.createFromOptions(vision, {
+        const filesetResolver = await FilesetResolver.forVisionTasks(
+            'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
+        );
+
+        handLandmarker = await HandLandmarker.createFromOptions(filesetResolver, {
             baseOptions: {
                 modelAssetPath: './hand_landmarker.task',
                 delegate: 'GPU'
