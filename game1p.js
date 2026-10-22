@@ -7,7 +7,7 @@
    - Semua fitur game tetap sama
    ============================================================ */
 
-import { HandLandmarker, FilesetResolver } from './vision_bundle.mjs';
+import { HandLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 
 /* ============================================================
    1. PALETTE KONTRAS
@@ -1051,7 +1051,7 @@ const HAND_CONNECTIONS = [
 async function initHandLandmarker() {
     try {
         console.log('📦 Loading FilesetResolver...');
-        const vision = await FilesetResolver.forVisionTasks('./wasm/');
+        const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
         
         console.log('🤖 Creating HandLandmarker...');
         handLandmarker = await HandLandmarker.createFromOptions(vision, {
