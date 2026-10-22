@@ -1052,15 +1052,16 @@ async function initHandLandmarker() {
     try {
         console.log('📦 Loading MediaPipe from CDN...');
         
-        // Load module secara dinamis dari CDN (tanpa file lokal)
+        // 1. Import dari ROOT package (bukan /vision_bundle.mjs)
         const vision = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
         const { HandLandmarker, FilesetResolver } = vision;
 
-        console.log('🤖 Creating HandLandmarker...');
+        // 2. Resolve WASM dari CDN
         const filesetResolver = await FilesetResolver.forVisionTasks(
             'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
         );
 
+        // 3. Buat HandLandmarker
         handLandmarker = await HandLandmarker.createFromOptions(filesetResolver, {
             baseOptions: {
                 modelAssetPath: './hand_landmarker.task',
@@ -1079,7 +1080,6 @@ async function initHandLandmarker() {
         return false;
     }
 }
-
 async function startCamera() {
     try {
         sfx.init();
