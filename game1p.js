@@ -274,7 +274,7 @@ function loadLevel(idx) {
     document.getElementById('target-svg-holder').innerHTML = renderCharacter(currentLevel.id, currentLevel.targets);
     updateMainSVG();
     updateProgress();
-    updateHint('👆', 'Cubit warna di palet atas!');
+    updateHint('👆', 'Cubit warna di palet samping!');
 	renderPartsList();
 }
 function renderPartsList() {
@@ -930,7 +930,7 @@ function resetAllToDefault() {
     updateProgress();
 	renderPartsList();
     showToast('same', '🧹 Semua warna direset!');
-    updateHint('👆', 'Cubit warna di palet atas!');
+    updateHint('👆', 'Cubit warna di palet samping!');
 }
 
 /* ============================================================
